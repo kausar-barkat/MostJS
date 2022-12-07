@@ -31,12 +31,32 @@ const countIfCompleted = (count, { completed }) => count + (completed ? 1 : 0);
 export const completedCount = ({ todos }: App): number =>
   todos.reduce(countIfCompleted, 0);
 
+export const filteredTodo = (
+  description: string,
+  id: number,
+  app: App
+): any => {
+  const convertedDescription = description.toLocaleLowerCase();
+  console.log("convertedDescription", convertedDescription);
+  const value = app.todos.some((el) => el.description === convertedDescription);
+  console.log("value", value);
+  return value
+    ? ""
+    : { description: convertedDescription, completed: false, id };
+};
+
+const getTodos = (app: App, description: string, id: number) => {
+  const newTodoValue = filteredTodo(description, id, app);
+  console.log("newTodoValue", newTodoValue);
+  return newTodoValue === "" ? app.todos : app.todos.concat(newTodoValue);
+};
+
 export const addTodo =
   (description: string) =>
   (app: App): App => ({
     ...app,
     nextId: app.nextId + 1,
-    todos: app.todos.concat([newTodo(description, app.nextId)]),
+    todos: getTodos(app, description, app.nextId),
   });
 
 export const removeTodo =
